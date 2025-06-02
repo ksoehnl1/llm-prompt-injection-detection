@@ -1,6 +1,6 @@
 # Literature Review
 
-## Repository of Papers
+## Another Larger Repository of Papers
 
 https://github.com/WhileBug/AwesomeLLMJailBreakPapers
 
