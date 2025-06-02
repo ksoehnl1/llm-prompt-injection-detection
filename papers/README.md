@@ -1,5 +1,7 @@
 # Literature Review
 
+This directory hosts the various papers deemed necessary and or useful to the project. The Project Literature Overview paper is a work in progress and will be expanded as research is continued.
+
 ## Another Larger Repository of Papers
 
 https://github.com/WhileBug/AwesomeLLMJailBreakPapers
