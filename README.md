@@ -17,3 +17,11 @@ Detecting prompt injection attacks is critical for building robust AI guardrail 
 - `papers/`: Collection of academic and industry resources
 - `results/`: Outputs from experiments (charts, logs, metrics)
 - `reports/`: Proposal and final writeups
+
+## Software
+
+The supporting software for this project is available in a separate repository:
+
+**[LLM Prompting Software](https://github.com/ksoehnl1/llm-prompting-software)**
+
+This project is a visual, node-based tool for building and running LLM pipelines locally using Ollama. It allows users to drag-and-drop components like prompt formatters, LLM callers, and conditional routers to create complex AI applications with a focus on user control and rapid experimentation, without cloud dependencies. The system supports saving/loading workflows and is built with Python/FastAPI and React.
