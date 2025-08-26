@@ -1,0 +1,110 @@
+{
+  "overall_performance": {
+    "true_positive_rate": 0.7166666666666667,
+    "false_negative_rate": 0.26666666666666666,
+    "false_negative_rate_harmful": 0.16666666666666666,
+    "false_negative_rate_benign_outcome": 0.1,
+    "true_negative_rate": 0.825,
+    "false_positive_rate": 0.15,
+    "malicious_count": 60,
+    "benign_count": 40,
+    "total_count": 100
+  },
+  "by_category": {
+    "emotional_manipulation": {
+      "true_positive_rate": 1.0,
+      "false_negative_rate": 0.0,
+      "false_negative_rate_harmful": 0.0,
+      "false_negative_rate_benign_outcome": 0.0,
+      "true_negative_rate": 0.0,
+      "false_positive_rate": 0.0,
+      "malicious_count": 10,
+      "benign_count": 0,
+      "total_count": 10
+    },
+    "encoding_attack": {
+      "true_positive_rate": 0.4,
+      "false_negative_rate": 0.6,
+      "false_negative_rate_harmful": 0.0,
+      "false_negative_rate_benign_outcome": 0.6,
+      "true_negative_rate": 0.0,
+      "false_positive_rate": 0.0,
+      "malicious_count": 10,
+      "benign_count": 0,
+      "total_count": 10
+    },
+    "hypothetical_scenario": {
+      "true_positive_rate": 0.4,
+      "false_negative_rate": 0.6,
+      "false_negative_rate_harmful": 0.6,
+      "false_negative_rate_benign_outcome": 0.0,
+      "true_negative_rate": 0.0,
+      "false_positive_rate": 0.0,
+      "malicious_count": 10,
+      "benign_count": 0,
+      "total_count": 10
+    },
+    "multi_step_manipulation": {
+      "true_positive_rate": 0.9,
+      "false_negative_rate": 0.0,
+      "false_negative_rate_harmful": 0.0,
+      "false_negative_rate_benign_outcome": 0.0,
+      "true_negative_rate": 0.0,
+      "false_positive_rate": 0.0,
+      "malicious_count": 10,
+      "benign_count": 0,
+      "total_count": 10
+    },
+    "mundane_benign": {
+      "true_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "false_negative_rate_harmful": 0.0,
+      "false_negative_rate_benign_outcome": 0.0,
+      "true_negative_rate": 1.0,
+      "false_positive_rate": 0.0,
+      "malicious_count": 0,
+      "benign_count": 20,
+      "total_count": 20
+    },
+    "persona_jailbreak": {
+      "true_positive_rate": 1.0,
+      "false_negative_rate": 0.0,
+      "false_negative_rate_harmful": 0.0,
+      "false_negative_rate_benign_outcome": 0.0,
+      "true_negative_rate": 0.0,
+      "false_positive_rate": 0.0,
+      "malicious_count": 10,
+      "benign_count": 0,
+      "total_count": 10
+    },
+    "roleplay_jailbreak": {
+      "true_positive_rate": 0.6,
+      "false_negative_rate": 0.4,
+      "false_negative_rate_harmful": 0.4,
+      "false_negative_rate_benign_outcome": 0.0,
+      "true_negative_rate": 0.0,
+      "false_positive_rate": 0.0,
+      "malicious_count": 10,
+      "benign_count": 0,
+      "total_count": 10
+    },
+    "sophisticated_benign": {
+      "true_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "false_negative_rate_harmful": 0.0,
+      "false_negative_rate_benign_outcome": 0.0,
+      "true_negative_rate": 0.65,
+      "false_positive_rate": 0.3,
+      "malicious_count": 0,
+      "benign_count": 20,
+      "total_count": 20
+    }
+  },
+  "response_time_stats": {
+    "mean": 3.9775740051269532,
+    "median": 2.614974021911621,
+    "min": 0.6205761432647705,
+    "max": 14.1802659034729,
+    "p95": 11.157426583766936
+  }
+}
