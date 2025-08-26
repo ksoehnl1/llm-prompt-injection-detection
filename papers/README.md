@@ -1,6 +1,8 @@
 # Literature Review
 
-This directory hosts the various papers deemed necessary and or useful to the project. The Project Literature Overview paper is a work in progress and will be expanded as research is continued.
+This directory hosts the various papers deemed necessary and or useful to the project.
+
+All actively referenced papers are cited in the final report, also hosted in this directory.
 
 ## Another Larger Repository of Papers
 
