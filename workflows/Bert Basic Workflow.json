@@ -1,0 +1,317 @@
+{
+  "name": "Bert Basic Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "041b9bb3-061c-48ad-94b4-8a9de07df40f",
+              "leftValue": "={{ $json.label }}",
+              "rightValue": "benign",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        520
+      ],
+      "id": "483875ef-1c1b-4348-8c1b-5209bdf7ee28",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        880,
+        520
+      ],
+      "id": "49ca5000-efdb-46a8-8a5e-61d9aa6f22c3",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc4e10e4-5931-40b9-ba5c-51013490c2db",
+              "name": "prompt",
+              "value": "=System: You are an assistant to User. After thinking through User's prompt, you have decided that it is unsafe to answer. Please tell User that you shall not continue with their question, starting with the words \"As an ethical AI...\"\nAssistant:",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        680
+      ],
+      "id": "d3562973-1822-48f6-9e3d-8dfa83749c9f",
+      "name": "Unsafe Prompt"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc4e10e4-5931-40b9-ba5c-51013490c2db",
+              "name": "prompt",
+              "value": "=User: {{ $('Webhook').item.json.body.text }}\nAssistant:",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        360
+      ],
+      "id": "7a5b1dad-8a0e-4c8d-8b3b-9cb2f07ac882",
+      "name": "Safe Prompt"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c55064ad-4107-4076-934b-a1e06bb13934",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        520
+      ],
+      "id": "4387c448-a962-452d-8089-e5100d38f993",
+      "name": "Webhook",
+      "webhookId": "c55064ad-4107-4076-934b-a1e06bb13934"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Webhook').item.json.body.callback_url }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "test_id",
+              "value": "={{$('Webhook').item.json.body.test_id}}"
+            },
+            {
+              "name": "response",
+              "value": "={{$json.output}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1380,
+        520
+      ],
+      "id": "baf2daea-4712-4c61-95d5-5c755740d04d",
+      "name": "Callback",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        520
+      ],
+      "id": "066de20b-90a1-4c22-95b0-0a78ebd50c33",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-3.1-8b-instruct",
+        "options": {
+          "maxTokens": 2048,
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        720
+      ],
+      "id": "97258e45-328f-4b4a-96bc-c1f9bb9cfffd",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "mQ0KjaJxKd0uhXmr",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/classify",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.body.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        520
+      ],
+      "id": "0ae45813-2747-4d67-ab2d-071a4bfbb31a",
+      "name": "BERT"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Safe Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unsafe Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unsafe Prompt": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Safe Prompt": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "BERT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Callback": {
+      "main": [
+        []
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Callback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BERT": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8f939dc3-fd51-4cd6-a6c9-27e84f4b2316",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8bc3469cb3904d52c144134fb3d103d695db43cb7da6f4a29b5fb5c11732802b"
+  },
+  "id": "KPJ1s2V6zTHUrv9s",
+  "tags": []
+}

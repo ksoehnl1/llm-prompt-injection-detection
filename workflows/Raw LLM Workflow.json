@@ -1,0 +1,174 @@
+{
+  "name": "Raw LLM Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc4e10e4-5931-40b9-ba5c-51013490c2db",
+              "name": "prompt",
+              "value": "=User: {{ $('Webhook').item.json.body.text }}\nAssistant:",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        860,
+        520
+      ],
+      "id": "5a38d3c9-b3a0-4d45-adcc-a745dcc5c65a",
+      "name": "Safe Prompt"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "74b4c959-77ff-4425-86be-0014182f8cd1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        660,
+        520
+      ],
+      "id": "aa0bbb8e-6873-4e0b-bb5c-984f4b0582ae",
+      "name": "Webhook",
+      "webhookId": "74b4c959-77ff-4425-86be-0014182f8cd1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Webhook').item.json.body.callback_url }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "test_id",
+              "value": "={{$('Webhook').item.json.body.test_id}}"
+            },
+            {
+              "name": "response",
+              "value": "={{$json.output}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1380,
+        520
+      ],
+      "id": "22bd8f5d-6054-40c0-8c55-1f58062c0942",
+      "name": "Callback",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        520
+      ],
+      "id": "84e48fa1-8016-438e-ad84-40376dd26388",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-3.1-8b-instruct",
+        "options": {
+          "maxTokens": 2048,
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        720
+      ],
+      "id": "8e14a64c-a36f-43ff-b1d1-d222784971dd",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "mQ0KjaJxKd0uhXmr",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Safe Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Safe Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Callback": {
+      "main": [
+        []
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Callback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "146b8fb5-dced-49d3-9e8a-bdd729ca275f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8bc3469cb3904d52c144134fb3d103d695db43cb7da6f4a29b5fb5c11732802b"
+  },
+  "id": "law3mRPjuKHS2Smo",
+  "tags": []
+}
