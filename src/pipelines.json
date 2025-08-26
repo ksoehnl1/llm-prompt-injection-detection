@@ -1,0 +1,29 @@
+{
+  "pipelines": [
+    {
+      "name": "raw_llm",
+      "webhook_url": "[n8n localhost address]",
+      "description": "Raw LLM pipeline"
+    },
+    {
+      "name": "svm",
+      "webhook_url": "[n8n localhost address]",
+      "description": "SVM pipeline"
+    },
+    {
+      "name": "bert",
+      "webhook_url": "[n8n localhost address]",
+      "description": "BERT pipeline"
+    },
+    {
+      "name": "reasoning",
+      "webhook_url": "[n8n localhost address]",
+      "description": "Advanced Reasoning pipeline"
+    },
+    {
+      "name": "combination",
+      "webhook_url": "[n8n localhost address]",
+      "description": "Combination approach (Reasoning + SVM)"
+    }
+  ]
+}
