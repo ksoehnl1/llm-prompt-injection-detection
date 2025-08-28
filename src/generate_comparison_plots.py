@@ -18,30 +18,27 @@ NOTE: This was made with the HELP of ChatGPT.
 The only functionality is combining the reports into a single comparison plot, nothing more.
 '''
 
+
 def load_and_process_reports(reports_dir: Path) -> pd.DataFrame:
     """
-    Finds all 'report_metrics.json' files in the analysis subdirectories,
-    loads them, and processes them into a single tidy DataFrame.
+    Finds all 'report_metrics.json' files, loads them, and processes them
+    into a single tidy DataFrame for both category and latency analysis.
     """
     all_pipeline_data = []
 
     report_files = list(reports_dir.glob('analysis_*/report_metrics.json'))
     if not report_files:
-        raise FileNotFoundError(f"No 'report_metrics.json' files found in subdirectories of '{reports_dir}'. "
-                                "Please ensure you have run the analyzer script first.")
+        raise FileNotFoundError(f"No 'report_metrics.json' files found in subdirectories of '{reports_dir}'.")
     print(f"Found {len(report_files)} report files to process.")
 
     for report_file in report_files:
         dir_name = report_file.parent.name
         try:
-            # Flexible name parsing to handle 'raw_llm', 'combination', and single names like 'svm'
+            # Flexible name parsing
             name_parts = dir_name.split('_')
-            if "raw" in name_parts and "llm" in name_parts:
-                pipeline_name = "RAW LLM"
-            elif name_parts[1].lower() == 'combination':
-                pipeline_name = 'HYBRID'
-            else:
-                pipeline_name = name_parts[1].upper()
+            pipeline_name = "RAW LLM" if "raw" in dir_name and "llm" in dir_name else \
+                "HYBRID" if name_parts[1].lower() == 'combination' else \
+                    name_parts[1].upper()
         except IndexError:
             print(f"Warning: Could not parse pipeline name from '{dir_name}'. Skipping.")
             continue
@@ -49,17 +46,21 @@ def load_and_process_reports(reports_dir: Path) -> pd.DataFrame:
         with open(report_file, 'r') as f:
             data = json.load(f)
 
+        # Extract overall stats for latency
+        mean_latency = data.get('response_time_stats', {}).get('mean', 0.0)
+
         by_category = data.get('by_category', {})
         for category, metrics in by_category.items():
             all_pipeline_data.append({
                 'pipeline': pipeline_name,
                 'category': category,
                 'tpr': metrics.get('true_positive_rate', 0.0),
-                'fpr': metrics.get('false_positive_rate', 0.0)
+                'fpr': metrics.get('false_positive_rate', 0.0),
+                'mean_latency': mean_latency  # Add overall latency to each row
             })
 
     if not all_pipeline_data:
-        raise ValueError("No data could be processed. Check your report files and directory structure.")
+        raise ValueError("No data could be processed.")
 
     return pd.DataFrame(all_pipeline_data)
 
@@ -155,6 +156,46 @@ def plot_fpr_comparison(df: pd.DataFrame, output_dir: Path):
     print(f"Successfully saved FPR comparison plot to: {output_path}")
 
 
+def plot_latency_comparison(df: pd.DataFrame, output_dir: Path):
+    """
+    NEW: Generates a bar chart comparing the mean end-to-end response time
+    of all pipelines, using a fixed order and consistent color palette.
+    """
+    # Get unique latency value for each pipeline
+    latency_df = df[['pipeline', 'mean_latency']].drop_duplicates()
+
+    if latency_df.empty:
+        print("No latency data to plot.")
+        return
+
+    pipeline_order = ["BERT", "HYBRID", "RAW LLM", "REASONING", "SVM"]
+
+    latency_df['pipeline'] = pd.Categorical(latency_df['pipeline'], categories=pipeline_order, ordered=True)
+    latency_df.sort_values('pipeline', inplace=True)
+
+    plt.figure(figsize=(12, 7))
+
+    ax = sns.barplot(data=latency_df, x='pipeline', y='mean_latency', palette='viridis')
+
+    ax.set_title('Comparison of Mean End-to-End Response Time', fontsize=18, weight='bold', pad=20)
+    ax.set_ylabel('Mean Response Time (seconds)', fontsize=14)
+    ax.set_xlabel('Pipeline', fontsize=14)
+    ax.tick_params(axis='x', rotation=0, labelsize=12)
+
+    # Add value labels on top of bars
+    for p in ax.patches:
+        ax.annotate(f'{p.get_height():.2f}s',
+                    (p.get_x() + p.get_width() / 2., p.get_height()),
+                    ha='center', va='center', fontsize=12, color='black', xytext=(0, 8),
+                    textcoords='offset points')
+
+    plt.tight_layout()
+
+    output_path = output_dir / "comparison_plot_latency.png"
+    plt.savefig(output_path)
+    plt.close()
+    print(f"Successfully saved Latency comparison plot to: {output_path}")
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate comparison plots from multiple AI pipeline analysis reports.",
@@ -180,6 +221,7 @@ def main():
         combined_df = load_and_process_reports(reports_path)
         plot_tpr_comparison(combined_df, output_path)
         plot_fpr_comparison(combined_df, output_path)
+        plot_latency_comparison(combined_df, output_path)
         print("\nComparison chart generation complete.")
     except Exception as e:
         print(f"\nAn error occurred: {e}")
