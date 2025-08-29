@@ -1,6 +1,6 @@
 # Using Transformer Pipelines to Detect Malicious Prompt Injection in LLMs
 
-This repository contains the complete source code, datasets, and workflow configurations for the research paper, "Using Transformer Pipelines to Detect Malicious Prompt Injection in LLMs".
+This repository contains the complete source code, datasets, and workflow configurations for the research paper, "Using Transformer Pipelines to Detect Malicious Prompt Injection in LLMs", created throughout the Summer 2025 semester.
 
 This study evaluates a spectrum of defensive pipelines against prompt injection, from traditional SVM classifiers to multi-stage LLM-based reasoning and a final, engineered hybrid guardrail. Our results demonstrate the fundamental trade-off between security effectiveness and user experience, arguing that robust LLM security requires a layered, tunable, and risk-aware approach.
 
